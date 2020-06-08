@@ -11,7 +11,7 @@ git clone https://github.com/yu122/install_k8s_official.git
 cd install_k8s_official
 # 配置阿里ubuntu源 可选
 ./ali_ubuntu_sources/set_ali_sources.sh
-# 暂时关闭swap
+# 暂时关闭swap (利用 vi /etc/fstab 将swap一行注释掉并重启即可永久关闭)
 sudo swapoff -a 
 ```
 
