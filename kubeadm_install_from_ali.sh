@@ -5,5 +5,5 @@ cat << EOF > /etc/apt/sources.list.d/kubernetes.list
 deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main
 EOF
 apt-get update
-apt-get install -y kubelet kubeadm kubectl
+apt-get install  kubelet kubeadm kubectl
 
