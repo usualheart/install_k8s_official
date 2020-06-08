@@ -1,0 +1,1 @@
+kubeadm init --apiserver-advertise-address 192.168.56.101 --kubernetes-version=v1.16.2 --image-repository=registry.aliyuncs.com/google_containers

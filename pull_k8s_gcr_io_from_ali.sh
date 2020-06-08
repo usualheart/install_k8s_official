@@ -1,5 +1,6 @@
-images=(  # 下面的镜像应该去除"k8s.gcr.io/"的前缀，版本换成上面获取到的版本
+# 下面的镜像应该去除"k8s.gcr.io/"的前缀，版本换成上面获取到的版本
 #通过这个命令获取需要pull的镜像: kubeadm config images list
+images=(
 kube-apiserver:v1.18.2
 kube-controller-manager:v1.18.2
 kube-scheduler:v1.18.2
