@@ -1,7 +1,20 @@
 # install_k8s_official
+
 在国内环境下，借助阿里镜像源，按照官方的指导，使用脚本一步一步安装kubernetes。
 
-Use the script to follow the official tutorial step by step to install kubernetes
+> 参考教程
+>
+> 【官方】在ubuntu上安装docker
+>
+> https://docs.docker.com/engine/install/ubuntu/
+>
+> 【官方】安装kubeadm
+>
+> https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+>
+> 【官方】通过kubeadm创建一个单控制面板的集群
+>
+> https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm
 
 # 准备工作
 ```sh
@@ -24,7 +37,7 @@ sudo swapoff -a
   ```sh
   sudo apt-get install docker-ce=5:18.09.0~3-0~ubuntu-xenial docker-ce-cli=5:18.09.0~3-0~ubuntu-xenial containerd.io=1.2.0-1
   ```
-  
+
 ##  注意安装比较旧的k8s时 需要注意docker的兼容性
 下面就是docker过新而要安装的k8s比较旧导致的结果
 ```sh
@@ -37,7 +50,7 @@ error execution phase preflight: [preflight] Some fatal errors occurred:
 [preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
 To see the stack trace of this error execute with --v=5 or higher
 ```
-  
+
 
 ## 配置docker
 
@@ -125,13 +138,10 @@ kubectl taint nodes --all node-role.kubernetes.io/master-
 kubeadm join --token <token> <control-plane-host>:<control-plane-port> --discovery-token-ca-cert-hash sha256:<hash>
 ```
 
-> control-plane-port一般默认是6443
-上面命令的一个例子：
->  ```
->  kubeadm join --token dj7ard.mtehsr9qts4mwgkg 192.168.0.102:6443 --discovery-token-ca-cert-hash sha256:be2258c8445d1eeeac88576b0a62a86bd2575fb991675853c97ef0df79666f38
-```
+### 参数1：`<token>`
 
 如果没有token可以在主节点上运行下边的命令得到：
+
 ```
 kubeadm token list
 ```
@@ -143,15 +153,27 @@ TOKEN                    TTL  EXPIRES              USAGES           DESCRIPTION 
                                                                     'kubeadm init'.        kubeadm:
                                                                                            default-node-token
 ```
+
 默认token 24小时过期。如果你在token已经过期后才加入到一个集群，可以通过在主节点上边运行下边的指令来创建一个新的token：
 ```sh
 kubeadm token create
 ```
-输出类似于这个：
+
+
+输出类似于：
 ```
 5didvk.d09sbcov8ph2amjw
 ```
+### 参数2：`<control-plane-host>:<control-plane-port>`
+
+- `<control-plane-host>`填主节点的ip地址，或者主节点的hostname（如果填hostname需要保证可以通过hostname访问到主节点）
+
+- `control-plane-port`一般默认是6443
+
+### 参数3：`--discovery-token-ca-cert-hash`
+
 如果你不知道`--discovery-token-ca-cert-hash`的值，可以通过运行下边的命令在主节点上得到：
+
 ```
 openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | \
    openssl dgst -sha256 -hex | sed 's/^.* //'
@@ -161,11 +183,19 @@ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outfor
 8cb2de97839780a412b93877f8507ad6c94f73add17d5d7058e91741c9d5ec78
 ```
 > ipv6相关的注意
- Note: To specify an IPv6 tuple for <control-plane-host>:<control-plane-port>, IPv6 address must be enclosed in square brackets, for example: [fd00::101]:2073.
+>
+>  Note: To specify an IPv6 tuple for <control-plane-host>:<control-plane-port>, IPv6 address must be enclosed in square brackets, for example: [fd00::101]:2073.
+
+### 加入结果
+
+填好参数的一个例子：
+
+```sh
+kubeadm join --token dj7ard.mtehsr9qts4mwgkg 192.168.0.102:6443 --discovery-token-ca-cert-hash sha256:be2258c8445d1eeeac88576b0a62a86bd2575fb991675853c97ef0df79666f38
+```
 
 kubeadm join命令执行后的结果应当如下所示:
 ```
-
 [preflight] Running pre-flight checks
 
 ... (log output of join workflow) ...
@@ -177,11 +207,11 @@ Node join complete:
 
 Run 'kubectl get nodes' on control-plane to see this machine join.
 ```
-几秒钟之后，你应当可以在主节点上通过运行`kubectl get nodes`看到这个节点已经加入了。
+几秒钟之后，应当可以在主节点上通过运行`kubectl get nodes`看到新节点已经加入了。
 
 
 
-# 辅助工具
+# 辅助工具说明
 > 如果kubeadm init中已经指定了`--image-repository=registry.aliyuncs.com/google_containers`就不需要再手动拉取k8s镜像以及手动打标签了
 - **[pull_k8s_gcr_io_from_ali.sh](https://github.com/yu122/install_k8s_official/blob/master/pull_k8s_gcr_io_from_ali.sh)**
 
@@ -198,3 +228,4 @@ Run 'kubectl get nodes' on control-plane to see this machine join.
 - **[ali_ubuntu_sources](https://github.com/yu122/install_k8s_official/tree/master/ali_ubuntu_sources)**
 
   配置ubuntu16.04阿里源。
+
