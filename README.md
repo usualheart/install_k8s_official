@@ -16,7 +16,16 @@
 >
 > https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm
 
+## 版本说明
+
+当前教程所安装的k8s、docker均默认为最新稳定版本（当前k8s最新约v1.18）
+
+如果需要安装比较旧的版本，需要确保k8s与docker之间兼容，并在安装时指定版本
+
+具体安装方法参见[安装指定版本k8s](./安装指定版本k8s.md)
+
 # 准备工作
+
 ```sh
 # 下载仓库代码到本地
 git clone https://github.com/yu122/install_k8s_official.git
@@ -33,24 +42,6 @@ sudo swapoff -a
 - **[install_docker_for_ubuntu1604.sh](https://github.com/yu122/install_k8s_official/blob/master/install_docker_for_ubuntu1604.sh)**
 
   按照Docker官方指导，为ubuntu安装docker
-## 与kubernetesv1.16兼容的docker版本：
-  ```sh
-  sudo apt-get install docker-ce=5:18.09.0~3-0~ubuntu-xenial docker-ce-cli=5:18.09.0~3-0~ubuntu-xenial containerd.io=1.2.0-1
-  ```
-
-##  注意安装比较旧的k8s时 需要注意docker的兼容性
-下面就是docker过新而要安装的k8s比较旧导致的结果
-```sh
-yyb@k8s0:~/install_k8s_official$ sudo ./init-master.sh 
-[init] Using Kubernetes version: v1.16.2
-[preflight] Running pre-flight checks
-        [WARNING SystemVerification]: this Docker version is not on the list of validated versions: 19.03.11. Latest validated version: 18.09
-error execution phase preflight: [preflight] Some fatal errors occurred:
-        [ERROR NumCPU]: the number of available CPUs 1 is less than the required 2
-[preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
-To see the stack trace of this error execute with --v=5 or higher
-```
-
 
 ## 配置docker
 
@@ -88,24 +79,13 @@ systemctl restart docker
 - **[kubeadm_install_from_ali.sh](https://github.com/yu122/install_k8s_official/blob/master/kubeadm_install_from_ali.sh)**
 
   按照阿里官方指导，设置kubernetes阿里源，同时安装kubeadm、kubelet、kubectl。
-## 安装指定版本的kubeadm kubectl kubelet
-```sh
-# 列出apt可以安装哪些版本
-apt-cache madison kubeadm kubectl kubelet
-# 安装指定版本 可以根据需要进行修改
-sudo apt-get install kubeadm=1.16.10-00 kubelet=1.16.10-00 kubectl=1.16.10-00
-```
-
-
 
 # 初始化k8s集群master
 使用kubeadm初始化一个master 可以通过修改kubernetes-version来指定kubernetes版本 也可以编写一个yaml配置文件来实现更复杂的自定义
 ```sh
-sudo kubeadm init --apiserver-advertise-address 192.168.56.101 --kubernetes-version=v1.16.2 --image-repository=registry.aliyuncs.com/google_containers
-
+sudo kubeadm init --apiserver-advertise-address 192.168.56.101  --image-repository=registry.aliyuncs.com/google_containers
 ```
 > - --image-repository选项指定了自定义的镜像仓库来代替gcr.io 避免国内无法下载的问题
-> - --kubernetes-version=v1.16.2设置了kubernetes的版本 需要注意这里的版本要与docker兼容
 
 更多细节可以参考k8s官方文档对`kubeadm init`的说明
 ## 一些配置
@@ -131,7 +111,7 @@ docker pull calico/cni:v3.14.1
 kubectl taint nodes --all node-role.kubernetes.io/master-
 ```
 
-打开后pod会调度在主节点运行，这部执行完成后相当于拥有了一个单节点kubernetes
+打开后pod会调度在主节点运行，**这步执行完成后相当于拥有了一个单节点kubernetes**
 # 加入节点 以构建多节点k8s集群
 在其它虚拟机上边安装好相应的docker kubeadm后执行下面的步骤加入到主节点，实现多节点的k8s集群。
 ```sh
