@@ -28,7 +28,7 @@
 
 ```sh
 # 下载仓库代码到本地
-git clone https://github.com/yu122/install_k8s_official.git
+git clone https://github.com/usualheart/install_k8s_official.git
 # 打开文件夹
 cd install_k8s_official
 # 配置阿里ubuntu源 可选
