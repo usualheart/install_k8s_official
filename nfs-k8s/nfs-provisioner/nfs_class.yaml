@@ -1,0 +1,7 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-storageclass # IMPORTANT pvc needs to mention this name
+provisioner: nfs-test # name can be anything
+parameters:
+  archiveOnDelete: "false"

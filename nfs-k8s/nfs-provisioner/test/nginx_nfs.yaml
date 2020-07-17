@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nfs-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      volumes:
+      - name: nfs-test #
+        persistentVolumeClaim:
+          claimName: nfs-pvc-test  # same name of pvc that was created
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - name: nfs-test # name of volume should match claimName volume
+          mountPath: mydata2 # mount inside of contianer
