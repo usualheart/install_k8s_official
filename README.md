@@ -36,7 +36,7 @@ Dashboard 是基于网页的 Kubernetes 用户界面。Dashboard 可以将容器
 
 在自建集群中配置nfs动态卷供应，可以比较简单地解决k8s的存储卷问题，也方便管理。
 
-配置使用方法参见[在k8s集群中使用nfs卷.md](./nfs-k8s/在k8s集群中使用nfs卷.md)
+配置使用方法参见[在k8s集群使用nfs卷.md](./nfs-k8s/在k8s集群使用nfs卷.md)
 
 # 准备工作
 
